@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
+from app.settings import *
+from django.core.mail import send_mail
+from django.template import loader
+
 
 
 class UserManager(BaseUserManager):
@@ -22,6 +26,7 @@ class UserManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
 
+
         return user
 
 
@@ -35,3 +40,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+    def sending(self):
+        html_message = loader.render_to_string('index.html')
+        send_mail('TEst', 'salam pidor', 'aliaskar.isakov@yandex.ru', ['aliaskar.isakov@mail.ru'], fail_silently=False, html_message=html_message, )
+        return True
