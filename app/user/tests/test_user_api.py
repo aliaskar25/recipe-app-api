@@ -11,6 +11,7 @@ TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
 
 
+
 def create_user(**kwargs):
     return get_user_model().objects.create_user(**kwargs)
 
