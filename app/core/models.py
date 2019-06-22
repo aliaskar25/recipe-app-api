@@ -5,6 +5,7 @@ from app.settings import *
 from django.core.mail import send_mail
 from django.template import loader
 
+from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -45,3 +46,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         html_message = loader.render_to_string('index.html')
         send_mail('TEst', 'salam pidor', 'aliaskar.isakov@yandex.ru', ['aliaskar.isakov@mail.ru'], fail_silently=False, html_message=html_message, )
         return True
+
+
+class Tag(models.Model):
+    """Tag to be used for a recipe"""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
