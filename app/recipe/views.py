@@ -20,7 +20,7 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
     
     def perfrom_create(self, serializer):
         """Create a new objects"""
-        serializer.save(user=self.request.user)
+        serializer.save()
 
 
 class TagViewSet(BaseRecipeAttrViewSet):
@@ -52,3 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return serializers.RecipeDetailSerializer
 
         return self.serializer_class
+    
+    def perform_create(self, serializer):
+        """Create a new recipe"""
+        serializer.save(user=self.request.user)

@@ -11,6 +11,12 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
         read_only_fields = ('id', )
 
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        tag = super().create(validated_data)
+        return tag
+
 
 class IngredientSerializer(serializers.ModelSerializer):
     """Serializer for ingredient objects"""
@@ -19,6 +25,12 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = ('id', 'name')
         read_only_fields = ('id', )
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        ingredient = super().create(validated_data)
+        return ingredient
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -39,6 +51,12 @@ class RecipeSerializer(serializers.ModelSerializer):
             'price', 'link', 
         )
         read_only_fields = ('id', )
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        recipe = super().create(validated_data)
+        return recipe
 
 
 class RecipeDetailSerializer(RecipeSerializer):

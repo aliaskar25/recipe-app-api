@@ -1,11 +1,17 @@
+import uuid
+import os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 from app.settings import *
-from django.core.mail import send_mail
-from django.template import loader
 
-from django.conf import settings
+
+def recipe_image_file_path(instance, filename):
+    """Generate file path for new recipe image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads/recipe/', filename)
 
 
 class UserManager(BaseUserManager):
@@ -42,17 +48,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-    def sending(self):
-        html_message = loader.render_to_string('index.html')
-        send_mail('TEst', 'salam pidor', 'aliaskar.isakov@yandex.ru', ['aliaskar.isakov@mail.ru'], fail_silently=False, html_message=html_message, )
-        return True
 
 
 class Tag(models.Model):
     """Tag to be used for a recipe"""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
 
@@ -64,7 +66,7 @@ class Ingredient(models.Model):
     """Ingredient to be used for a recipe"""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
 
@@ -75,7 +77,7 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     """Recipe object"""
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
     title = models.CharField(max_length=255)
@@ -84,6 +86,7 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def __str__(self):
         return self.title
